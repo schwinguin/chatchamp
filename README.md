@@ -22,7 +22,7 @@ This repository contains the code for a chat application built with Flask and So
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/chat-app.git
+    git clone https://github.com/schwinguin/chatchamp.git
     cd chat-app
     ```
 
