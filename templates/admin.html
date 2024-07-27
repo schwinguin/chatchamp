@@ -54,6 +54,9 @@
             <div class="container-fluid">
                 <h1 class="my-4 text-center">Admin Dashboard</h1>
 
+                <!-- Back Button -->
+                <button type="button" class="btn btn-secondary btn-back" onclick="window.history.back();">Back</button>
+
                 <!-- Server Settings Section -->
                 <section id="server-settings" class="scrollable-container mb-4 content-section">
                     <div class="card shadow-sm">
@@ -331,7 +334,6 @@
         .then(data => alert(data.message));
     }
 
-	
     function saveNotificationSettings() {
         const notificationSettings = {
             notify_on_new_user: document.getElementById('notify_on_new_user').checked,
@@ -373,9 +375,8 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         loadNotificationSettings();
-    });	
-	
-	
+    });
+
     function saveMailSettings() {
         const mailSettings = {
             mail_server: document.getElementById('mail_server').value,
@@ -640,8 +641,8 @@
         // Show default section on page load
         showSection('server-settings');
     });
-	
-	function sendTestEmail() {
+
+    function sendTestEmail() {
         const to_email = document.getElementById('test_email').value;
         const subject = 'Test Email';
         const body = 'This is a test email sent from the admin panel.';
@@ -662,7 +663,6 @@
         .then(data => alert(data.message))
         .catch(error => console.error('There was a problem with the fetch operation:', error));
     }
-	
 </script>
 
 <style>
@@ -704,6 +704,11 @@
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
+    }
+    .btn-back {
+        position: absolute;
+        top: 20px;
+        right: 20px;
     }
     @media (max-width: 767.98px) {
         #sidebar {
