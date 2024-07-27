@@ -4,13 +4,20 @@ This repository contains the code for a chat application built with Flask and So
 
 ## Features
 
-- User authentication and authorization
-- Real-time messaging with Socket.IO
-- Chat rooms with optional password protection
-- File uploads and downloads
-- Email notifications
-- Admin dashboard for managing users, rooms, and settings
-- Voice chat functionality
+- Real-Time Messaging
+The core of the application allows users to engage in real-time messaging within various chat rooms. The use of Socket.IO facilitates instant communication.
+
+- User Authentication
+Users can register and log in to the application. The authentication process includes user approval by an admin and the ability to manage user sessions securely.
+
+- File Uploads
+The application supports uploading different types of files, including text, images, videos, and audio files, enhancing the chat experience.
+
+- Email Notifications
+Email notifications can be sent for various events, such as user registration or room creation. This feature is integrated using the smtplib module.
+
+- Admin Management
+Admins have access to additional features, including user management, room management, server settings, and generating SSL certificates for secure communication.
 
 ## Prerequisites
 
