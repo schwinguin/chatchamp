@@ -86,8 +86,8 @@ Open a web browser and navigate to http://localhost:5554 to access the applicati
 
 ## Default login credentials
 
-Username: admin
-Password: password
+- Username: admin
+- Password: password
 
 ## Routes
 - / - Home page (requires login)
