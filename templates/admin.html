@@ -1,0 +1,747 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+                <button class="btn btn-primary d-md-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                </button>
+                <div class="collapse d-md-block" id="sidebarMenu">
+                    <h4 class="sidebar-heading">Admin Menu</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showSection('server-settings')">
+                                <i class="fas fa-cogs"></i> Server Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('mail-server-settings')">
+                                <i class="fas fa-envelope"></i> Mail Server Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('manage-rooms')">
+                                <i class="fas fa-door-open"></i> Manage Rooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('manage-users')">
+                                <i class="fas fa-users"></i> Manage Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('manage-files')">
+                                <i class="fas fa-file"></i> Manage Uploaded Files
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('notification-settings')">
+                                <i class="fas fa-bell"></i> Notification Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="main-content">
+            <div class="container-fluid">
+                <h1 class="my-4 text-center">Admin Dashboard</h1>
+
+                <!-- Server Settings Section -->
+                <section id="server-settings" class="scrollable-container mb-4 content-section">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Server Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="server-settings-form">
+                                <div class="mb-3">
+                                    <label for="host" class="form-label">Host:</label>
+                                    <input type="text" class="form-control" id="host" placeholder="0.0.0.0">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="port" class="form-label">Port:</label>
+                                    <input type="text" class="form-control" id="port" placeholder="5000">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="debug">
+                                        <label class="form-check-label" for="debug">Debug Mode</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="ssl">
+                                        <label class="form-check-label" for="ssl">Enable SSL</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="auto_user_approval">
+                                        <label class="form-check-label" for="auto_user_approval">Auto User Approval</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cert_file" class="form-label">Certificate File:</label>
+                                    <input type="text" class="form-control" id="cert_file">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="key_file" class="form-label">Key File:</label>
+                                    <input type="text" class="form-control" id="key_file">
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                                    <button type="button" class="btn btn-secondary" onclick="generateCertificate()">Generate Certificate</button>
+                                    <button type="button" class="btn btn-warning" onclick="restartServer()">Restart Server</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mail Server Settings Section -->
+                <section id="mail-server-settings" class="scrollable-container mb-4 content-section" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Mail Server Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="mail-server-settings-form">
+                                <div class="mb-3">
+                                    <label for="mail_server" class="form-label">Mail Server:</label>
+                                    <input type="text" class="form-control" id="mail_server" placeholder="smtp.example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mail_port" class="form-label">Mail Port:</label>
+                                    <input type="number" class="form-control" id="mail_port" placeholder="587">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mail_username" class="form-label">Mail Username:</label>
+                                    <input type="text" class="form-control" id="mail_username" placeholder="your-email@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mail_password" class="form-label">Mail Password:</label>
+                                    <input type="password" class="form-control" id="mail_password">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="mail_use_tls">
+                                        <label class="form-check-label" for="mail_use_tls">Use TLS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="mail_use_ssl">
+                                        <label class="form-check-label" for="mail_use_ssl">Use SSL</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="notification_email" class="form-label">Notification Email:</label>
+                                    <input type="email" class="form-control" id="notification_email" placeholder="notification@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="senders_name" class="form-label">Sender's Name:</label>
+                                    <input type="text" class="form-control" id="senders_name" placeholder="Your Name">
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                                    <button type="button" class="btn btn-primary" onclick="saveMailSettings()">Save Settings</button>
+                                </div>
+                            </form>
+                            <div class="mt-4">
+                                <h5>Send Test Email</h5>
+                                <form id="test-email-form">
+                                    <div class="mb-3">
+                                        <label for="test_email" class="form-label">Recipient Email:</label>
+                                        <input type="email" class="form-control" id="test_email" placeholder="recipient@example.com">
+                                    </div>
+                                    <button type="button" class="btn btn-secondary" onclick="sendTestEmail()">Send Test Email</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Manage Rooms Section -->
+                <section id="manage-rooms" class="scrollable-container mb-4 content-section" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Manage Rooms</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="create-room-form" class="mb-3">
+                                <div class="mb-3">
+                                    <label for="room_name" class="form-label">Room Name:</label>
+                                    <input type="text" class="form-control" id="room_name" placeholder="Room Name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="room_password" class="form-label">Room Password:</label>
+                                    <input type="password" class="form-control" id="room_password" placeholder="Room Password">
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="createRoom()">Create Room</button>
+                            </form>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Room Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rooms-list">
+                                    <!-- Rooms will be listed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Manage Users Section -->
+                <section id="manage-users" class="scrollable-container mb-4 content-section" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Manage Users</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="create-user-form" class="mb-3">
+                                <div class="mb-3">
+                                    <label for="new_username" class="form-label">Username:</label>
+                                    <input type="text" class="form-control" id="new_username" placeholder="Username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new_password" class="form-label">Password:</label>
+                                    <input type="password" class="form-control" id="new_password" placeholder="Password">
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="createUser()">Create User</button>
+                            </form>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-list">
+                                    <!-- Users will be listed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Manage Files Section -->
+                <section id="manage-files" class="scrollable-container mb-4 content-section" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">Manage Uploaded Files</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>File Path</th>
+                                        <th>Room</th>
+                                        <th>Username</th>
+                                        <th>Timestamp</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="files-list">
+                                    <!-- Files will be listed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notification Settings Section -->
+                <section id="notification-settings" class="scrollable-container mb-4 content-section" style="display: none;">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">Notification Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="notification-settings-form">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="notify_on_new_user">
+                                    <label class="form-check-label" for="notify_on_new_user">Notify on New User Registration</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="notify_on_new_message">
+                                    <label class="form-check-label" for="notify_on_new_message">Notify on New Message</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="notify_on_room_creation">
+                                    <label class="form-check-label" for="notify_on_room_creation">Notify on Room Creation</label>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-3">
+                                    <button type="button" class="btn btn-warning" onclick="saveNotificationSettings()">Save Settings</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Include FontAwesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<!-- Include Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function showSection(sectionId) {
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.style.display = 'none';
+        });
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+
+        // Optionally, update active state on sidebar
+        document.querySelectorAll('#sidebar .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`#sidebar .nav-link[onclick*="${sectionId}"]`).classList.add('active');
+    }
+
+    // JavaScript functions to handle various actions
+    function saveSettings() {
+        const settings = {
+            host: document.getElementById('host').value,
+            port: document.getElementById('port').value,
+            debug: document.getElementById('debug').checked,
+            ssl: document.getElementById('ssl').checked,
+            auto_user_approval: document.getElementById('auto_user_approval').checked,
+            cert_file: document.getElementById('cert_file').value,
+            key_file: document.getElementById('key_file').value
+        };
+        fetch('/admin/save_settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        })
+        .then(response => response.json())
+        .then(data => alert(data.message));
+    }
+
+	
+    function saveNotificationSettings() {
+        const notificationSettings = {
+            notify_on_new_user: document.getElementById('notify_on_new_user').checked,
+            notify_on_new_message: document.getElementById('notify_on_new_message').checked,
+            notify_on_room_creation: document.getElementById('notify_on_room_creation').checked
+        };
+        fetch('/admin/save_notification_settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(notificationSettings)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => alert(data.message))
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    function loadNotificationSettings() {
+        fetch('/admin/load_notification_settings')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('notify_on_new_user').checked = data.notify_on_new_user;
+            document.getElementById('notify_on_new_message').checked = data.notify_on_new_message;
+            document.getElementById('notify_on_room_creation').checked = data.notify_on_room_creation;
+        })
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadNotificationSettings();
+    });	
+	
+	
+    function saveMailSettings() {
+        const mailSettings = {
+            mail_server: document.getElementById('mail_server').value,
+            mail_port: document.getElementById('mail_port').value,
+            mail_username: document.getElementById('mail_username').value,
+            mail_password: document.getElementById('mail_password').value,
+            mail_use_tls: document.getElementById('mail_use_tls').checked,
+            mail_use_ssl: document.getElementById('mail_use_ssl').checked,
+            notification_email: document.getElementById('notification_email').value,
+            senders_name: document.getElementById('senders_name').value
+        };
+        fetch('/admin/save_mail_settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mailSettings)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => alert(data.message))
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    function generateCertificate() {
+        fetch('/admin/generate_certificate', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('cert_file').value = data.cert_file;
+            document.getElementById('key_file').value = data.key_file;
+            alert('Certificate generated successfully');
+        });
+    }
+
+    function restartServer() {
+        const settings = {
+            host: document.getElementById('host').value,
+            port: document.getElementById('port').value,
+            debug: document.getElementById('debug').checked,
+            ssl: document.getElementById('ssl').checked,
+            cert_file: document.getElementById('cert_file').value,
+            key_file: document.getElementById('key_file').value
+        };
+        fetch('/admin/restart_server', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        })
+        .then(response => response.json())
+        .then(data => alert(data.message));
+    }
+
+    function loadSettings() {
+        fetch('/admin/load_settings')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('host').value = data.host;
+            document.getElementById('port').value = data.port;
+            document.getElementById('debug').checked = data.debug;
+            document.getElementById('ssl').checked = data.ssl;
+            document.getElementById('auto_user_approval').checked = data.auto_user_approval;
+            document.getElementById('cert_file').value = data.cert_file;
+            document.getElementById('key_file').value = data.key_file;
+        });
+    }
+
+    function loadMailSettings() {
+        fetch('/admin/load_mail_settings')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('mail_server').value = data.mail_server;
+            document.getElementById('mail_port').value = data.mail_port;
+            document.getElementById('mail_username').value = data.mail_username;
+            document.getElementById('mail_password').value = data.mail_password;
+            document.getElementById('mail_use_tls').checked = data.mail_use_tls;
+            document.getElementById('mail_use_ssl').checked = data.mail_use_ssl;
+            document.getElementById('notification_email').value = data.notification_email;
+            document.getElementById('senders_name').value = data.senders_name;
+        })
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadMailSettings();
+        // Show default section on page load
+        showSection('server-settings');
+    });
+
+    function createRoom() {
+        const roomData = {
+            name: document.getElementById('room_name').value,
+            password: document.getElementById('room_password').value
+        };
+        fetch('/admin/rooms', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(roomData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadRooms();
+        });
+    }
+
+    function deleteRoom(roomId) {
+        fetch(`/admin/rooms/${roomId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadRooms();
+        });
+    }
+
+    function createUser() {
+        const userData = {
+            username: document.getElementById('new_username').value,
+            password: document.getElementById('new_password').value
+        };
+        fetch('/admin/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+        });
+    }
+
+    function updateUser(userId, data) {
+        fetch(`/admin/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+        });
+    }
+
+    function deleteUser(userId) {
+        fetch(`/admin/users/${userId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+        });
+    }
+
+    function deleteFile(fileId) {
+        fetch('/admin/files', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ file_id: fileId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadFiles();
+        });
+    }
+
+    function loadRooms() {
+        fetch('/admin/rooms')
+        .then(response => response.json())
+        .then(data => {
+            const roomsList = document.getElementById('rooms-list');
+            roomsList.innerHTML = '';
+            data.forEach(room => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${room.name}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRoom(${room.id})">Delete</button>
+                    </td>
+                `;
+                roomsList.appendChild(row);
+            });
+        });
+    }
+
+    function loadUsers() {
+        fetch('/admin/users')
+        .then(response => response.json())
+        .then(data => {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '';
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.is_approved ? 'Approved' : 'Pending'}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="updateUser(${user.id}, {approve: true})">Approve</button>
+                        <button class="btn btn-warning btn-sm" onclick="openUpdateUsernameModal(${user.id}, '${user.username}')">Update Username</button>
+                        <button class="btn btn-info btn-sm" onclick="openUpdatePasswordModal(${user.id})">Update Password</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>
+                    </td>
+                `;
+                usersList.appendChild(row);
+            });
+        });
+    }
+
+    function loadFiles() {
+        fetch('/admin/files')
+        .then(response => response.json())
+        .then(data => {
+            const filesList = document.getElementById('files-list');
+            filesList.innerHTML = '';
+            data.forEach(file => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${file.file_path}</td>
+                    <td>${file.room_name}</td>
+                    <td>${file.username}</td>
+                    <td>${file.timestamp}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFile(${file.id})">Delete</button>
+                    </td>
+                `;
+                filesList.appendChild(row);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSettings();
+        loadMailSettings();
+        loadRooms();
+        loadUsers();
+        loadFiles();
+        // Show default section on page load
+        showSection('server-settings');
+    });
+	
+	function sendTestEmail() {
+        const to_email = document.getElementById('test_email').value;
+        const subject = 'Test Email';
+        const body = 'This is a test email sent from the admin panel.';
+
+        fetch('/admin/send_test_email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ to_email, subject, body })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => alert(data.message))
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    }
+	
+</script>
+
+<style>
+    body {
+        overflow-x: hidden;
+    }
+    #sidebar {
+        height: 100vh;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    #sidebar .nav-link.active {
+        color: #0d6efd;
+        background-color: #e9ecef;
+    }
+    .sidebar-heading {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    .scrollable-container {
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    .card {
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+    .card-header {
+        font-size: 1.25rem;
+    }
+    .table {
+        margin-top: 1rem;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    @media (max-width: 767.98px) {
+        #sidebar {
+            height: auto;
+        }
+        .scrollable-container {
+            max-height: none;
+            overflow-y: visible;
+        }
+        main {
+            padding: 1rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .card-header {
+            padding: 1rem;
+        }
+        .table {
+            font-size: 0.875rem;
+        }
+    }
+    @media (min-width: 768px) {
+        #sidebar {
+            height: 100vh;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .scrollable-container {
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        main {
+            padding: 2rem;
+        }
+    }
+</style>
+{% endblock %}

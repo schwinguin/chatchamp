@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="form-signin">
+    <form action="{{ url_for('register') }}" method="post" onsubmit="return validateForm()">
+        <h1 class="h3 mb-3 font-weight-normal text-center">Register</h1>
+        
+        <!-- Username Field -->
+        <div class="form-group">
+            <label for="username">Username <small>(max 12 characters)</small></label>
+            <input type="text" name="username" id="username" class="form-control" placeholder="Enter a unique username" required autofocus maxlength="12">
+            <small id="usernameHelp" class="form-text text-muted">Your username will be visible to other users.</small>
+        </div>
+        
+        <!-- Password Field -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Enter a strong password" required>
+            <small id="passwordHelp" class="form-text text-muted">Make sure your password is at least 8 characters long.</small>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        <p class="mt-3 text-center"><a href="{{ url_for('login') }}">Already have an account? Sign in</a></p>
+    </form>
+</div>
+
+<script>
+    function validateForm() {
+        var username = document.forms[0]["username"].value;
+        var password = document.forms[0]["password"].value;
+        
+        if (username.length > 12) {
+            alert("Username cannot be longer than 12 characters.");
+            return false;
+        }
+
+        if (password == "") {
+            alert("Password must be filled out.");
+            return false;
+        }
+        
+        if (password.length < 8) {
+            alert("Password must be at least 8 characters long.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat Rooms{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0" style="min-height: 100vh; display: flex; flex-direction: column;">
+    <header class="bg-primary text-white py-3 mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="m-0">Chat Rooms</h1>
+            <div class="d-flex">
+                <button class="btn btn-light" onclick="location.href='{{ url_for('admin') }}'">Admin</button>
+                <button class="btn btn-light ms-2" onclick="location.href='{{ url_for('logout') }}'">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container flex-grow-1">
+        <div class="text-center mb-4">
+            <a href="{{ url_for('create_room') }}" class="btn btn-success">Create Room</a>
+        </div>
+        <div class="rooms-wrapper">
+            <div class="grid-container">
+              {% for room in rooms %}
+                <div class="grid-item" id="room-{{ room.id }}">
+                    <div class="card shadow-sm" style="{% if room.background_image %}background-image: url('{{ url_for('uploaded_file', filename=room.background_image) }}'); background-size: cover; background-position: center;{% endif %}">
+                        <div class="card-body" style="background-color: rgba(255, 255, 255, 0.8);">
+                            <h5 class="card-title">{{ room.name }}</h5>
+                            <p class="card-text">Users: <span class="user-count">{{ room.user_count }}</span></p>
+                            <button class="btn btn-secondary" onclick="joinRoom({{ room.id }}, {{ 'true' if room.password_hash else 'false' }})">Join Room</button>
+                        </div>
+                    </div>
+                </div>
+              {% endfor %}
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+const socket = io();
+
+// Function to fetch user counts and update the DOM
+function fetchUserCounts() {
+    fetch('/api/user_counts')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(room => {
+                const roomElement = document.getElementById('room-' + room.room_id);
+                if (roomElement) {
+                    const userCountElement = roomElement.querySelector('.user-count');
+                    if (userCountElement) {
+                        userCountElement.textContent = room.count;
+                    } else {
+                        console.error(`User count element not found for room ${room.room_id}`);
+                    }
+                } else {
+                    console.error(`Room element not found for room ${room.room_id}`);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching user counts:', error);
+        });
+}
+
+// Fetch user counts on page load
+window.onload = function() {
+    fetchUserCounts();
+};
+
+socket.on('update_user_count', function(data) {
+    const roomElement = document.getElementById('room-' + data.room_id);
+    if (roomElement) {
+        const userCountElement = roomElement.querySelector('.user-count');
+        if (userCountElement) {
+            userCountElement.textContent = data.count;
+            console.log(`Updated user count for room ${data.room_id} to ${data.count}`);
+        } else {
+            console.error(`User count element not found for room ${data.room_id}`);
+        }
+    } else {
+        console.error(`Room element not found for room ${data.room_id}`);
+    }
+});
+
+function joinRoom(roomId, requiresPassword) {
+    if (requiresPassword) {
+        var password = prompt("Enter room password:");
+        if (password !== null) {
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/join_room/" + roomId;
+            
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "room_password";
+            input.value = password;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    } else {
+        window.location.href = "/join_room/" + roomId;
+    }
+}
+</script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+}
+
+header, footer {
+    display: flex;
+    width: 100%;
+}
+
+.rooms-wrapper {
+    overflow-y: auto;
+    max-height: 70vh; /* Adjust this value as needed */
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.grid-item {
+    height: 250px;
+}
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+    transition: background-color 0.2s, color 0.2s;
+    padding: 10px 20px; /* Add padding to buttons */
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.ms-2 {
+    margin-left: 8px; /* Add margin between buttons */
+}
+</style>
+{% endblock %}

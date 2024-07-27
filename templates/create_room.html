@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Room{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="h3 mb-3 font-weight-normal text-center">Create a New Chat Room</h1>
+    <form action="{{ url_for('create_room') }}" method="post" enctype="multipart/form-data" class="p-4 border rounded shadow-sm">
+        <!-- Room Information Section -->
+        <div class="form-group">
+            <h5 class="mb-3">Room Information</h5>
+            <label for="room_name">Room Name</label>
+            <input type="text" id="room_name" name="room_name" class="form-control" placeholder="Enter room name" required>
+            <small class="form-text text-muted">The name of the chat room. This is required.</small>
+        </div>
+
+        <!-- Room Password Section -->
+        <div class="form-group mt-4">
+            <h5 class="mb-3">Room Security</h5>
+            <label for="room_password">Room Password</label>
+            <input type="password" id="room_password" name="room_password" class="form-control" placeholder="Enter room password (optional)">
+            <small class="form-text text-muted">Set a password to restrict access to this room. Leave blank for no password.</small>
+        </div>
+
+        <!-- Background Image Section -->
+        <div class="form-group mt-4">
+            <h5 class="mb-3">Room Appearance</h5>
+            <label for="background_image">Background Image</label>
+            <input type="file" id="background_image" name="background_image" class="form-control-file">
+            <small class="form-text text-muted">Upload a background image for the room tile. This is optional.</small>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group mt-4">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Create Room</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
