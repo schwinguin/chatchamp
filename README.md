@@ -30,13 +30,13 @@ Admins have access to additional features, including user management, room manag
 1. Clone the repository:
     ```bash
     git clone https://github.com/schwinguin/chatchamp.git
-    cd chat-app
+    cd chatchamp
     ```
 
 2. Create and activate a virtual environment:
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows, use venv\Scripts\activate
+    python3 -m venv myenv
+    source myenv/bin/activate  # On Windows, use myenv\Scripts\activate
     ```
 
 3. Install the required Python packages:
@@ -44,42 +44,11 @@ Admins have access to additional features, including user management, room manag
     pip install -r requirements.txt
     ```
 
-4. Install front-end dependencies:
-    ```bash
-    npm install
-    ```
-
-5. Create an instance folder and the SQLite database:
-    ```bash
-    mkdir instance
-    ```
-
-6. Create a `settings.json` file in the instance folder with the following content:
-    ```json
-    {
-      "host": "0.0.0.0",
-      "port": "5554",
-      "debug": true,
-      "ssl": false,
-      "cert_file": "",
-      "key_file": "",
-      "auto_user_approval": false,
-      "mail_server": "smtp.example.com",
-      "mail_port": 587,
-      "mail_username": "your-email@example.com",
-      "mail_password": "your-email-password",
-      "mail_use_tls": true,
-      "mail_use_ssl": false,
-      "senders_name": "Your Name",
-      "notification_email": "notify@example.com"
-    }
-    ```
-
 ## Usage
 
-Initialize the database and start the server:
+Initialize the database and start the server with:
 ```bash
-python chatChamp.py
+python3 chatChamp_Server.py
 
 ```
 Open a web browser and navigate to http://localhost:5554 to access the application.
