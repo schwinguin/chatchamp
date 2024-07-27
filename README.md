@@ -84,6 +84,11 @@ python chatChamp.py
 ```
 Open a web browser and navigate to http://localhost:5554 to access the application.
 
+## Default login credentials
+
+Username: admin
+Password: password
+
 ## Routes
 - / - Home page (requires login)
 - /login - User login
