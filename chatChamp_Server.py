@@ -22,10 +22,6 @@ from flask_cors import CORS
 from flask_caching import Cache
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
-from flask import has_request_context, json as flask_json
-from werkzeug.local import LocalStack
-_request_ctx_stack = LocalStack()
-
 
 
 # Flask application setup
