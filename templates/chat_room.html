@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room</title>
+    <title>{{ room.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'%3E%3Cpath d='M360 320c-10.7 0-21.2-.8-31.6-2.4-3.7 2.9-7.4 5.7-11.2 8.4 3.2 2.7 6.3 5.6 9.2 8.6 5 5.1 12.2 7.4 19.4 7.4h176l40 40V312c0-7.1-2.3-14.4-7.4-19.4-3-3-5.9-6-8.6-9.2-2.8-3.8-5.6-7.5-8.4-11.2 1.6-10.4 2.4-20.9 2.4-31.6 0-97.2-86.2-176-192-176S184 123.8 184 221s86.2 176 192 176zm0-160a48 48 0 100-96 48 48 0 000 96zm-320 64C21.5 224 0 285.3 0 352c0 12.4 1.7 24.4 5 36-7.7 22.4-22.4 42.3-43 59.3 9.5 6.5 21.2 10.7 33.7 10.7h120l40 40V448h128c32.1 0 61.8-8.1 88-22.3-11.2-7.8-21.6-16.8-31-26.9-8.4 1.1-17 1.6-25.7 1.6-105.9 0-192-78.8-192-176zm112 0a48 48 0 100-96 48 48 0 000 96z'/%3E%3C/svg%3E" type="image/svg+xml">
+
     <style>
         #emoji-picker {
             display: none;

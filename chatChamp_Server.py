@@ -212,6 +212,7 @@ def join_room_view(room_id):
     messages = Message.query.filter_by(room_id=room_id).order_by(Message.timestamp.asc()).all()
     return render_template('chat_room.html', room=room, messages=messages)
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
