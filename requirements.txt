@@ -13,7 +13,6 @@ click==8.1.7
 ConfigArgParse==1.2.3
 configobj==5.0.6
 cryptography==3.4.8
-dbus-python==1.2.16
 distro==1.5.0
 dnspython==1.16.0
 email-validator==1.1.3
