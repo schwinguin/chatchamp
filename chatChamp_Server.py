@@ -35,6 +35,8 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Ensure the instance folder exists
 os.makedirs(app.instance_path, exist_ok=True)
+# Ensure the upload folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 cache = Cache(app)
@@ -42,6 +44,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'mp4'}
 
@@ -291,6 +294,8 @@ def upload_file():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
+        # Ensure the upload folder exists before saving the file
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return jsonify({'filename': filename})
     return jsonify({'error': 'Invalid file type'}), 400

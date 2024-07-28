@@ -290,6 +290,50 @@
     </div>
 </div>
 
+<!-- Update Username Modal -->
+<div class="modal fade" id="updateUsernameModal" tabindex="-1" aria-labelledby="updateUsernameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateUsernameModalLabel">Update Username</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="update-username-form">
+                    <input type="hidden" id="update-username-user-id">
+                    <div class="mb-3">
+                        <label for="update-username" class="form-label">New Username:</label>
+                        <input type="text" class="form-control" id="update-username" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updateUsername()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Password Modal -->
+<div class="modal fade" id="updatePasswordModal" tabindex="-1" aria-labelledby="updatePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePasswordModalLabel">Update Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="update-password-form">
+                    <input type="hidden" id="update-password-user-id">
+                    <div class="mb-3">
+                        <label for="update-password" class="form-label">New Password:</label>
+                        <input type="password" class="form-control" id="update-password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="updatePassword()">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Include FontAwesome for icons -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 <!-- Include Bootstrap JavaScript -->
@@ -607,6 +651,59 @@
                 `;
                 usersList.appendChild(row);
             });
+        });
+    }
+
+    function openUpdateUsernameModal(userId, currentUsername) {
+        document.getElementById('update-username-user-id').value = userId;
+        document.getElementById('update-username').value = currentUsername;
+        const updateUsernameModal = new bootstrap.Modal(document.getElementById('updateUsernameModal'));
+        updateUsernameModal.show();
+    }
+
+    function openUpdatePasswordModal(userId) {
+        document.getElementById('update-password-user-id').value = userId;
+        const updatePasswordModal = new bootstrap.Modal(document.getElementById('updatePasswordModal'));
+        updatePasswordModal.show();
+    }
+
+    function updateUsername() {
+        const userId = document.getElementById('update-username-user-id').value;
+        const newUsername = document.getElementById('update-username').value;
+
+        fetch(`/admin/users/${userId}/update_username`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: newUsername })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+            const updateUsernameModal = bootstrap.Modal.getInstance(document.getElementById('updateUsernameModal'));
+            updateUsernameModal.hide();
+        });
+    }
+
+    function updatePassword() {
+        const userId = document.getElementById('update-password-user-id').value;
+        const newPassword = document.getElementById('update-password').value;
+
+        fetch(`/admin/users/${userId}/update_password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password: newPassword })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            loadUsers();
+            const updatePasswordModal = bootstrap.Modal.getInstance(document.getElementById('updatePasswordModal'));
+            updatePasswordModal.hide();
         });
     }
 
