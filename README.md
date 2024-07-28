@@ -1,4 +1,4 @@
-# Chat Application
+# chatChamp - Voice Chat Server
 
 This repository contains the code for a chat application built with Flask and Socket.IO. The application supports real-time messaging, user authentication, file uploads, email notifications, and admin management features.
 
