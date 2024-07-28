@@ -243,23 +243,30 @@
             shouldAutoScroll = messagesContainer.scrollTop + messagesContainer.clientHeight >= messagesContainer.scrollHeight - 10;
         };
         function updateUserList(username, isConnected) {
-            console.log('Updating user list for:', username, 'Connected:', isConnected);
-            var users = document.getElementById('users');
-            var user = document.getElementById('user-' + username);
-            if (isConnected) {
-                if (!user) {
-                    user = document.createElement('li');
-                    user.id = 'user-' + username;
-                    user.className = 'list-group-item';
-                    users.appendChild(user);
-                }
+        console.log('Updating user list for:', username, 'Connected:', isConnected);
+        var users = document.getElementById('users');
+        var user = document.getElementById('user-' + username);
+        if (isConnected) {
+            if (!user) {
+                user = document.createElement('li');
+                user.id = 'user-' + username;
+                user.className = 'list-group-item';
                 user.textContent = username + (usersInVoiceChat.has(username) ? ' (Voice)' : ' (Online)');
-            } else {
-                if (user) {
-                    user.remove();
-                }
+                users.appendChild(user);
+
+                // Add click event listener to mention user
+                user.addEventListener('click', function() {
+                    var messageInput = document.getElementById('message-input');
+                    messageInput.value += '@' + username + ' ';
+                    messageInput.focus();
+                });
+            }
+        } else {
+            if (user) {
+                user.remove();
             }
         }
+    }
         function clearUserList() {
             var users = document.getElementById('users');
             users.innerHTML = '';
