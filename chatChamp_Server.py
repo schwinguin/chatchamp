@@ -23,7 +23,6 @@ from flask_caching import Cache
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
 
-
 # Flask application setup
 app = Flask(__name__, instance_relative_config=True)
 CORS(app)
@@ -44,7 +43,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'mp4'}
 
@@ -91,7 +89,6 @@ class Message(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-	
 import smtplib
 from email.message import EmailMessage
 from email_validator import validate_email, EmailNotValidError
@@ -133,9 +130,6 @@ def send_email(to_email, subject, body):
     except Exception as e:
         return f"Failed to send email: {e}"
 
-
-	
-
 @app.route('/admin/send_test_email', methods=['POST'])
 @login_required
 def send_test_email():
@@ -150,8 +144,6 @@ def send_test_email():
     result = send_email(to_email, subject, body)
     return jsonify({'message': result})
 
-	
-	
 @app.route('/')
 @login_required
 def index():
@@ -259,8 +251,6 @@ def register():
                 flash('Error registering user: ' + str(e))
     return render_template('register.html')
 
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -351,7 +341,6 @@ def admin_save_settings():
         json.dump(settings, f)
 
     return jsonify({'message': 'Settings saved successfully'})
-
 
 @app.route('/admin/start_server', methods=['POST'])
 @login_required
@@ -568,7 +557,6 @@ def send_notification_email(subject, body):
 
     return send_email(notification_email, subject, body)
 	
-
 @app.route('/admin/load_notification_settings', methods=['GET'])
 @login_required
 def admin_load_notification_settings():
@@ -615,9 +603,6 @@ def admin_save_notification_settings():
 
     return jsonify({'message': 'Notification settings saved successfully'})
 
-
-
-	
 @app.route('/admin/load_mail_settings', methods=['GET'])
 @login_required
 def admin_load_mail_settings():
@@ -665,7 +650,7 @@ def admin_save_mail_settings():
 
     settings.update({
         "mail_server": data.get("mail_server", settings.get("mail_server", "")),
-        "mail_port": data.get("mail_port", settings.get("mail_port", 587)),
+        "mail_port": data.get("mail_port", 587),
         "mail_username": data.get("mail_username", settings.get("mail_username", "")),
         "mail_password": data.get("mail_password", settings.get("mail_password", "")),
         "mail_use_tls": data.get("mail_use_tls", settings.get("mail_use_tls", True)),
@@ -678,8 +663,6 @@ def admin_save_mail_settings():
         json.dump(settings, f)
 
     return jsonify({'message': 'Mail settings saved successfully'})
-
-
 
 rooms = {}  # Dictionary to track users in rooms
 room_user_counts = {}  # Dictionary to track user counts in rooms
@@ -806,7 +789,6 @@ def handle_edit_message(data):
     else:
         print(f"Message ID: {message_id} not found or user not authorized")
 
-
 @socketio.on('connect')
 @login_required
 def handle_connect():
@@ -867,16 +849,16 @@ def handle_voice_disconnected(data):
     if room_id in voice_chat_peers and current_user.username in voice_chat_peers[room_id]:
         del voice_chat_peers[room_id][current_user.username]
         emit('voice_disconnected', {'username': current_user.username}, room=room_id)
-
-    # Clean up empty rooms
-    if not voice_chat_peers[room_id]:
-        del voice_chat_peers[room_id]
-    else:
-        # If only one user is left, disconnect them
-        if len(voice_chat_peers[room_id]) == 1:
-            remaining_user = next(iter(voice_chat_peers[room_id]))
-            emit('force_voice_disconnect', {'username': remaining_user}, room=room_id)
+        
+        # If room is empty after removing current user, delete the room entry
+        if not voice_chat_peers[room_id]:
             del voice_chat_peers[room_id]
+        else:
+            # If only one user is left, disconnect them
+            if len(voice_chat_peers[room_id]) == 1:
+                remaining_user = next(iter(voice_chat_peers[room_id]))
+                emit('force_voice_disconnect', {'username': remaining_user}, room=room_id)
+                del voice_chat_peers[room_id]
 
 def generate_self_signed_cert(cert_file, key_file):
     from cryptography import x509
@@ -963,7 +945,6 @@ def add_default_entries():
         except Exception as e:
             db.session.rollback()
             logging.error(f"Error initializing database: {e}")
-
 
 if __name__ == '__main__':
     check_and_initialize_database()
