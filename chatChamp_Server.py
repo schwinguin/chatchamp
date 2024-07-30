@@ -797,9 +797,6 @@ def handle_edit_message(data):
         print(f"Message ID: {message_id} not found or user not authorized")
 
 
-
-
-
 @socketio.on('connect')
 @login_required
 def handle_connect():
