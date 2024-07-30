@@ -40,8 +40,7 @@
             transform: scale(1.2);
             transition: transform 0.2s ease-in-out;
         }
-        .message .content {
-        }
+  
         .message .content .emoji {
             font-size: 24px;
         }
@@ -178,10 +177,31 @@
         var room_id = "{{ room.id }}";
         var typingTimeout;
         var usersInVoiceChat = new Set();
-        socket.emit('join', {'room_id': room_id});
+        
+        
+        
         socket.on('connect', function() {
-            console.log('Connected to Socket.IO server');
-        });
+        console.log('Socket connected with ID:', socket.id);
+        socket.emit('join', {'room_id': room_id});
+
+        socket.on('joined_room', function(data) {
+        console.log('Joined room:', data.room_id);
+    });
+        
+    });
+
+         socket.on('disconnect', function() {
+        console.log('Socket disconnected');
+        setTimeout(function() {
+        socket.connect();
+    }, 1000);  // Attempt to reconnect after a second
+    });
+
+    socket.on('reconnect', function() {
+    console.log('Socket reconnected');
+    socket.emit('join', { room_id: room_id });
+});
+
         socket.on('message', function(msg) {
             addMessageToDom(msg, true);
         });
@@ -388,6 +408,7 @@
             event.stopPropagation();
             if (confirm("Are you sure you want to delete this message?")) {
                 deleteMessage(messageId);
+                fetchMessages();  // Refetch all messages
             }
         }
 
@@ -395,16 +416,19 @@
             var newContent = prompt("Edit your message:", currentContent);
             if (newContent !== null && newContent !== currentContent) {
                 socket.emit('edit_message', { id: messageId, content: newContent });
+                fetchMessages();  // Refetch all messages
             }
         }
 
         function deleteMessage(messageId) {
             console.log('Sending delete message request for ID: ' + messageId);
             socket.emit('delete_message', { id: messageId, room_id: room_id });
+            fetchMessages();  // Refetch all messages
         }
 
         socket.on('edit_message', function(data) {
             console.log('Received edit message event for ID:', data.id);
+            fetchMessages();  // Refetch all messages
             var messageElement = document.getElementById('message-' + data.id);
             if (messageElement) {
                 var contentElement = messageElement.querySelector('.content');
@@ -414,6 +438,7 @@
 
         socket.on('delete_message', function(data) {
             console.log('Received delete message event for ID:', data.id);
+            fetchMessages();  // Refetch all messages
             var messageElement = document.getElementById('message-' + data.id);
             if (messageElement) {
                 messageElement.remove();

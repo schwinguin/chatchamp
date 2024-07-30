@@ -673,6 +673,7 @@ voice_chat_peers = {}  # Global dictionary to track voice chat participants
 def on_join(data):
     room_id = data['room_id']
     join_room(room_id)
+    print(f"{current_user.username} joined room {room_id}")
     if room_id not in rooms:
         rooms[room_id] = []
         room_user_counts[room_id] = 0
@@ -680,10 +681,11 @@ def on_join(data):
     if current_user.username not in rooms[room_id]:
         rooms[room_id].append(current_user.username)
         room_user_counts[room_id] += 1
-    
+
     emit('user_joined', {'username': current_user.username}, room=room_id)
     emit('update_user_count', {'room_id': room_id, 'count': room_user_counts[room_id]}, broadcast=True)
     emit('online_users', rooms[room_id], room=room_id)
+
 
 @socketio.on('leave')
 @login_required
@@ -770,9 +772,11 @@ def handle_delete_message(data):
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], message.file_path)
             if os.path.exists(file_path):
                 os.remove(file_path)
+        print(f"Emitting delete_message for ID: {message_id} to room {room_id}")
+        emit('delete_message', {'id': message_id}, room=room_id)
         db.session.delete(message)
         db.session.commit()
-        emit('delete_message', {'id': message_id}, room=room_id)
+        print(f"Message ID: {message_id} deleted and committed to database")
     else:
         print(f"Message ID: {message_id} not found or user not authorized")
 
@@ -783,11 +787,18 @@ def handle_edit_message(data):
     print(f"Editing message ID: {message_id}")
     message = Message.query.get(message_id)
     if message and message.username == current_user.username:
+        room_id = message.room_id
         message.content = data['content']
+        print(f"Emitting edit_message for ID: {message_id} with content: {data['content']} to room {room_id}")
+        emit('edit_message', {'id': message_id, 'content': data['content']}, room=room_id)
         db.session.commit()
-        emit('edit_message', {'id': message_id, 'content': data['content']}, room=message.room_id)
+        print(f"Message ID: {message_id} edited and committed to database")
     else:
         print(f"Message ID: {message_id} not found or user not authorized")
+
+
+
+
 
 @socketio.on('connect')
 @login_required
