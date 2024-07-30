@@ -532,24 +532,28 @@
         }
 
         function leaveVoiceChat() {
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
-            }
-            for (let peer of Object.values(peers)) {
-                peer.destroy();
-            }
-            peers = {};
-            socket.emit('voice_disconnected', { room_id: room_id, username: current_user });
-            startVoiceChatBtn.style.display = 'inline-block';
-            muteVoiceChatBtn.style.display = 'none';
-            leaveVoiceChatBtn.style.display = 'none';
-            audioMeter.style.display = 'none';
-            remoteAudio.srcObject = null;
-            isInitiator = false;
-            document.getElementById('voice-chat-bar').classList.remove('active');
-            socket.emit('voice_user_left', { username: current_user });
-        }
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    for (let peer of Object.values(peers)) {
+        peer.destroy();
+    }
+    peers = {};
+    socket.emit('voice_disconnected', { room_id: room_id, username: current_user });
+    startVoiceChatBtn.style.display = 'inline-block';
+    muteVoiceChatBtn.style.display = 'none';
+    leaveVoiceChatBtn.style.display = 'none';
+    audioMeter.style.display = 'none';
+    remoteAudio.srcObject = null;
+    isInitiator = false;
+    document.getElementById('voice-chat-bar').classList.remove('active');
+    socket.emit('voice_user_left', { username: current_user });
+    // Update user status in the list
+    usersInVoiceChat.delete(current_user);
+    updateUserList(current_user, true);
+}
+
 
         function setupAudioMeter(stream) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
